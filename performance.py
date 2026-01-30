@@ -126,23 +126,27 @@ def single_run(num_buyers, num_sellers):
     return avg_response_time, throughput
 
 
-
 def run_experiment(num_buyers, num_sellers):
     response_time_runs = []
     throughput_runs = []
 
-    print(f"\n--- Buyers: {num_buyers}, Sellers: {num_sellers} ---")
-
+    print()
     for run in range(NUM_RUNS):
         avg_rt, th = single_run(num_buyers, num_sellers)
         response_time_runs.append(avg_rt)
         throughput_runs.append(th)
-        print(f"Run {run + 1}: avg_rt={avg_rt:.4f}s, throughput={th:.2f} ops/sec")
 
-    print("\n=== FINAL AVERAGED RESULTS ===")
-    print(f"Buyers: {num_buyers}, Sellers: {num_sellers}")
-    print(f"Average Response Time: {sum(response_time_runs)/NUM_RUNS:.4f} seconds")
-    print(f"Average Throughput: {sum(throughput_runs)/NUM_RUNS:.2f} ops/sec")
+        print(
+            f"run {run+1}/{NUM_RUNS}: "
+            f"avg_resp={avg_rt:.5f}s, "
+            f"throughput={th:.2f} ops/s"
+        )
+
+    print("\n---- Averages over runs ----")
+    print(f"Scenario 1: sellers={num_sellers}, buyers={num_buyers}")
+    print(f"Average response time (s/op): {sum(response_time_runs)/NUM_RUNS:.5f}")
+    print(f"Average throughput (ops/s): {sum(throughput_runs)/NUM_RUNS:.2f}")
+
 
 
 if __name__ == "__main__":
