@@ -39,29 +39,31 @@ All communication occurs strictly over TCP sockets.
 
 ---
 
-## Deployment Instructions
+## 🚀 Deployment Instructions
 
-### Start All Services
-```bash
-./run_all.sh
-```
+This system consists of four independent server components:
 
-### Stop All Services
-```bash
-./stop_all.sh
-```
-
-### Manual Startup (Alternative)
-```bash
-python3 product_db.py
-python3 customer_db.py
-python3 seller_server.py
-python3 buyer_server.py
-```
+1. **Product Database**  
+2. **Customer Database**  
+3. **Seller Server (Frontend)**  
+4. **Buyer Server (Frontend)**  
 
 ---
 
-## Running Clients
+###  Step 1: Start All Servers
+
+```bash
+chmod +x run_all.sh
+./run_all.sh
+```
+
+This launches all backend and frontend services.
+
+---
+
+###  Step 2 (Optional — Interactive Testing)
+
+Run the command-line clients to interact with the system:
 
 ```bash
 python3 seller_client.py
@@ -70,12 +72,18 @@ python3 buyer_client.py
 
 ---
 
-##  Running Performance Experiments
-
-The benchmarking script simulates concurrent buyers and sellers.
+### Step 3: Performance Evaluation
 
 ```bash
 python3 performance.py
+```
+
+---
+
+###  Stop All Services
+
+```bash
+./stop_all.sh
 ```
 
 ### Scenarios Executed
