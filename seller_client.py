@@ -1,54 +1,35 @@
 import socket
 from protocol import send, recv
 
-CUST = ('localhost', 9002)
-SELLER_SERVER = ('localhost', 8001)
+SERVER=('localhost',8001)
+CUST=('localhost',9002)
 
-s = socket.socket()
-s.connect(SELLER_SERVER)
-sid = None
+sid=None
+
+def login(user,pwd):
+    global sid
+    s=socket.socket(); s.connect(CUST)
+    send(s,{'type':'LOGIN','role':'seller','user':user,'pwd':pwd})
+    r=recv(s); s.close()
+    sid=r.get('sid')
+    print(r)
 
 while True:
-    cmd = input('seller> ').split()
+    cmd=input("seller> ").split()
+    if cmd[0]=='login': login(cmd[1],cmd[2]); continue
+    if not sid: print("login first"); continue
 
-    if cmd[0] == 'register':
-        t = socket.socket()
-        t.connect(CUST)
-        send(t, {
-            'type': 'CREATE',
-            'role': 'seller',
-            'user': cmd[1],
-            'pwd': cmd[2]
-        })
-        print(recv(t))
-        t.close()
+    s=socket.socket(); s.connect(SERVER)
+
+    if cmd[0]=='add':
+        send(s,{'type':'ADD_ITEM','sid':sid,'name':cmd[1],'category':1,'keywords':['a'],'condition':'new','price':10,'qty':5})
+    elif cmd[0]=='price':
+        send(s,{'type':'UPDATE_PRICE','sid':sid,'item':cmd[1],'price':int(cmd[2])})
+    elif cmd[0]=='qty':
+        send(s,{'type':'UPDATE_QTY','sid':sid,'item':cmd[1],'delta':int(cmd[2])})
+    else:
+        print("Unknown")
         continue
 
-    if cmd[0] == 'login':
-        t = socket.socket()
-        t.connect(CUST)
-        send(t, {
-            'type': 'LOGIN',
-            'role': 'seller',
-            'user': cmd[1],
-            'pwd': cmd[2]
-        })
-        r = recv(t)
-        t.close()
-        sid = r.get('sid')
-        print(r)
-        continue
-
-    if not sid:
-        print("Please login first")
-        continue
-
-
-    send(s, {
-        'type': 'ADD_ITEM',
-        'sid': sid,
-        'category': 1,
-        'keywords': ['a'],
-        'price': 10
-    })
     print(recv(s))
+    s.close()
