@@ -1,54 +1,33 @@
 import socket
 from protocol import send, recv
 
-CUST = ('localhost', 9002)
-BUYER_SERVER = ('localhost', 8002)
+SERVER=('localhost',8002)
+CUST=('localhost',9002)
+sid=None
 
-s = socket.socket()
-s.connect(BUYER_SERVER)
-sid = None
+def login(user,pwd):
+    global sid
+    s=socket.socket(); s.connect(CUST)
+    send(s,{'type':'LOGIN','role':'buyer','user':user,'pwd':pwd})
+    r=recv(s); s.close()
+    sid=r.get('sid')
+    print(r)
 
 while True:
-    cmd = input('buyer> ').split()
+    cmd=input("buyer> ").split()
+    if cmd[0]=='login': login(cmd[1],cmd[2]); continue
+    if not sid: print("login first"); continue
 
-    if cmd[0] == 'register':
-        t = socket.socket()
-        t.connect(CUST)
-        send(t, {
-            'type': 'CREATE',
-            'role': 'buyer',
-            'user': cmd[1],
-            'pwd': cmd[2]
-        })
-        print(recv(t))
-        t.close()
-        continue
+    s=socket.socket(); s.connect(SERVER)
 
-    if cmd[0] == 'login':
-        t = socket.socket()
-        t.connect(CUST)
-        send(t, {
-            'type': 'LOGIN',
-            'role': 'buyer',
-            'user': cmd[1],
-            'pwd': cmd[2]
-        })
-        r = recv(t)
-        t.close()
-        sid = r.get('sid')
-        print(r)
-        continue
+    if cmd[0]=='search':
+        send(s,{'type':'SEARCH','sid':sid,'category':1,'keywords':['a']})
+    elif cmd[0]=='cart':
+        send(s,{'type':'ADD_CART','sid':sid,'item':cmd[1],'qty':1})
+    elif cmd[0]=='show':
+        send(s,{'type':'GET_CART','sid':sid})
+    else:
+        print("Unknown"); continue
 
-    if not sid:
-        print("Please login first")
-        continue
-
-    send(s, {
-        'type': cmd[0].upper(),
-        'sid': sid,
-        'category': 1,
-        'keywords': ['a'],
-        'item': cmd[-1] if len(cmd) > 1 else None,
-        'qty': 1
-    })
     print(recv(s))
+    s.close()
