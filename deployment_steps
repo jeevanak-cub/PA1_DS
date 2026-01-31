@@ -1,0 +1,26 @@
+DEPLOYMENT INSTRUCTIONS 
+
+This system consists of four independent server components:
+
+1. Product Database
+2. Customer Database
+3. Seller Server (frontend)
+4. Buyer Server (frontend)
+
+To deploy the system:
+
+Step 1:
+    ./run_all.sh
+
+This launches all backend and frontend servers.
+
+Step 2 (optional – interactive testing):
+    python3 seller_client.py
+    python3 buyer_client.py
+
+Step 3 (performance evaluation):
+    python3 performance.py
+
+To stop the system:
+    ./stop_all.sh
+
