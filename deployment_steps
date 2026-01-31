@@ -10,6 +10,7 @@ This system consists of four independent server components:
 To deploy the system:
 
 Step 1:
+    chmod +x run_all.sh
     ./run_all.sh
 
 This launches all backend and frontend servers.
