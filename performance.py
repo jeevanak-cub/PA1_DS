@@ -11,10 +11,19 @@ lock=threading.Lock()
 
 def login(role,user):
     s=socket.socket(); s.connect(CUST)
-    login_type='seller' if role=='seller' else 'buyer'
-    send(s,{'type':'LOGIN','role':login_type,'user':user,'pwd':'pass'})
-    r=recv(s); s.close()
+
+    send(s,{'type':'LOGIN','role':role,'user':user,'pwd':'pass'})
+    r=recv(s)
+
+    if r.get('status')!='OK':
+        send(s,{'type':'CREATE','role':role,'user':user,'pwd':'pass'})
+        recv(s)
+        send(s,{'type':'LOGIN','role':role,'user':user,'pwd':'pass'})
+        r=recv(s)
+
+    s.close()
     return r['sid']
+
 
 def buyer_worker(times):
     sid=login('buyer','buyer1')
